@@ -1,3 +1,4 @@
+
 public enum Side
 {
     buy,
@@ -12,14 +13,19 @@ public enum Status
     cancelled
 }
 
-public interface IOrder 
+public abstract class Order 
 {
     public int Order_ID {get;}
-    public Side order_type {get;}
+    public Side order_side {get;}
     public double Quantity {get;}
     public decimal Price {get;}
     public DateTime Time {get;}
     public Status status {get;set;}
     public double filled {get;set;}
     public double remaining {get;set;}
+}
+
+public class LimitOrder : Order
+{
+
 }
