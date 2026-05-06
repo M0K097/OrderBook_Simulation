@@ -20,7 +20,6 @@ public abstract class Order
     public int order_id {get;}
     public Side order_side {get;}
     public double quantity {get;}
-    public decimal price {get;}
     public DateTime time {get;}
     public Status status {get; private set;}
     public double filled {get; private set;}
@@ -61,12 +60,11 @@ public abstract class Order
         this.status = Status.cancelled;
     }
 
-    public Order(Side side, double quantity, decimal price)
+    public Order(Side side, double quantity)
     {
        this.order_id = Order.order_id_counter++;
        this.order_side = side;
        this.quantity = quantity;
-       this.price = price;
        this.time = DateTime.Now;
        this.status = Status.open;
        this.filled = 0;
@@ -74,8 +72,19 @@ public abstract class Order
     }
 }
 
+// a limit order needs a price it can be executed for.
 public class LimitOrder : Order
 {
-    public LimitOrder(Side side, double quantity, decimal price) : base(side,quantity,price){}
+    public decimal price {get; set;} 
+    public LimitOrder(Side side, double quantity,decimal price) : base(side,quantity)
+    {
+        this.price = price;
+    }
+}
+
+// a market order is executed to the best available price right now.
+public class MarketOrder : Order
+{
+    public MarketOrder(Side side, double quantity,decimal price) : base(side,quantity){}
 }
 

@@ -1,4 +1,4 @@
-﻿LimitOrder test_order = new LimitOrder(Side.buy,100,(decimal)10.0);
+﻿LimitOrder test_order = new LimitOrder(Side.buy,100,(decimal)10);
 
 Console.WriteLine(test_order.show_order_info());
 
