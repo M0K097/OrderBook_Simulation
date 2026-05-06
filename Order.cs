@@ -5,6 +5,12 @@ public enum Side
     sell
 }
 
+public enum OrderType
+{
+    market,
+    limit
+}
+
 public enum Status
 {
     open,
@@ -18,6 +24,7 @@ public abstract class Order
     public static int order_id_counter = 0;
 
     public int order_id {get;}
+    public OrderType type {get; set;} 
     public Side order_side {get;}
     public double quantity {get;}
     public DateTime time {get;}
@@ -76,8 +83,9 @@ public abstract class Order
 public class LimitOrder : Order
 {
     public decimal price {get; set;} 
-    public LimitOrder(Side side, double quantity,decimal price) : base(side,quantity)
+    public LimitOrder( Side side, double quantity,decimal price) : base(side,quantity)
     {
+        this.type = OrderType.limit;
         this.price = price;
     }
 }
@@ -85,6 +93,9 @@ public class LimitOrder : Order
 // a market order is executed to the best available price right now.
 public class MarketOrder : Order
 {
-    public MarketOrder(Side side, double quantity,decimal price) : base(side,quantity){}
+    public MarketOrder(Side side, double quantity,decimal price) : base(side,quantity)
+    {
+        this.type = OrderType.market;
+    }
 }
 

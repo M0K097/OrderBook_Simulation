@@ -1,7 +1,5 @@
-﻿LimitOrder test_order = new LimitOrder(Side.buy,100,(decimal)10);
+﻿OrderBook test_book = new OrderBook();
+test_book.place_limit_order(Side.buy, 100,(decimal)10);
 
-Console.WriteLine(test_order.show_order_info());
-
-Console.WriteLine(test_order.fill_order(120));
-Console.WriteLine(test_order.show_order_info());
+test_book.print_orderbook();
 
