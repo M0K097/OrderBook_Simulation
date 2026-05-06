@@ -1,0 +1,14 @@
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/bin/Debug/net10.0/orderbook_simulation
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/bin/Debug/net10.0/orderbook_simulation.deps.json
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/bin/Debug/net10.0/orderbook_simulation.runtimeconfig.json
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/bin/Debug/net10.0/orderbook_simulation.dll
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/bin/Debug/net10.0/orderbook_simulation.pdb
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/orderbook_simulation.GeneratedMSBuildEditorConfig.editorconfig
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/orderbook_simulation.AssemblyInfoInputs.cache
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/orderbook_simulation.AssemblyInfo.cs
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/orderbook_simulation.csproj.CoreCompileInputs.cache
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/orderbook_simulation.dll
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/refint/orderbook_simulation.dll
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/orderbook_simulation.pdb
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/orderbook_simulation.genruntimeconfig.cache
+/home/m0k0/Desktop/Abschlussprojekt_Moritz_AE/orderbook_simulation/obj/Debug/net10.0/ref/orderbook_simulation.dll

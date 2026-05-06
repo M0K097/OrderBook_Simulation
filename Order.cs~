@@ -1,0 +1,25 @@
+public enum Side
+{
+    buy,
+    sell
+}
+
+public enum Status
+{
+    open,
+    partially_filled,
+    filled,
+    cancelled
+}
+
+public interface IOrder 
+{
+    public int Order_ID {get;}
+    public Side order_type {get;}
+    public double Quantity {get;}
+    public decimal Price {get;}
+    public DateTime Time {get;}
+    public Status status {get;set;}
+    public double filled {get;set;}
+    public double remaining {get;set;}
+}
