@@ -22,21 +22,43 @@ public abstract class Order
     public double quantity {get;}
     public decimal price {get;}
     public DateTime time {get;}
-    public Status status {get;private set;}
-    public double filled {get;private set;}
-    public double remaining {get;private set;}
+    public Status status {get; private set;}
+    public double filled {get; private set;}
+    public double remaining {get; private set;}
 
-    public bool fill_order(double amount)
+    public double fill_order(double amount)
     {
-        filled += amount;
-        remaining = quantity - filled;
-        if (remaining > 0)
+        var left_over = amount - remaining;
+        if(left_over >= 0)
         {
-            status = Status.partially_filled;
-            return false;
+            filled += remaining;
+            status = Status.filled;
+            remaining = 0;
         }
-        status = Status.filled;
-        return true;
+        else
+        {
+            remaining -= amount;
+            filled += amount;
+            left_over = 0;
+            status = Status.partially_filled;
+        }
+        return left_over;
+    }
+
+    public string show_order_info()
+    {
+        var info = $"SIDE: {order_side}\n"+
+            $"QUANTITY: {quantity}\n"+
+            $"FILLED: {filled}\n"+
+            $"REMAINING: {remaining}\n"+
+            $"STATUS: {status}";
+
+        return info;
+    }
+
+    public void cancel_order()
+    {
+        this.status = Status.cancelled;
     }
 
     public Order(Side side, double quantity, decimal price)
@@ -50,5 +72,10 @@ public abstract class Order
        this.filled = 0;
        this.remaining = this.quantity;
     }
+}
+
+public class LimitOrder : Order
+{
+    public LimitOrder(Side side, double quantity, decimal price) : base(side,quantity,price){}
 }
 
