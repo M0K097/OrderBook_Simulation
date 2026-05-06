@@ -54,6 +54,8 @@ public abstract class Order
     public string show_order_info()
     {
         var info = $"SIDE: {order_side}\n"+
+            $"ID: {order_id}\n"+
+            $"TYPE: {type}\n"+
             $"QUANTITY: {quantity}\n"+
             $"FILLED: {filled}\n"+
             $"REMAINING: {remaining}\n"+
@@ -83,10 +85,12 @@ public abstract class Order
 public class LimitOrder : Order
 {
     public decimal price {get; set;} 
-    public LimitOrder( Side side, double quantity,decimal price) : base(side,quantity)
+    public int relative_market_time {get; set;}
+    public LimitOrder( Side side, double quantity,decimal price, int ticker_time) : base(side,quantity)
     {
         this.type = OrderType.limit;
         this.price = price;
+        this.relative_market_time = ticker_time;
     }
 }
 
