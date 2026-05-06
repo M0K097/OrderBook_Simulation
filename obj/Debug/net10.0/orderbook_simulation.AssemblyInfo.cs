@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("orderbook_simulation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7058fd82b76eceb6ddc0aabd591103abb25c302d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79223fb429ffd6143bd0aab9b0a1e5352254c956")]
 [assembly: System.Reflection.AssemblyProductAttribute("orderbook_simulation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("orderbook_simulation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

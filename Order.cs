@@ -48,6 +48,9 @@ public abstract class Order
             left_over = 0;
             status = Status.partially_filled;
         }
+        Console.WriteLine($"Order filled --->> amount:{amount} -- ID:{order_id}");
+        Console.WriteLine($"leftover = {left_over} = STATUS = {status}");
+
         return left_over;
     }
 

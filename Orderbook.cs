@@ -1,5 +1,5 @@
 // the orderbook is the central point of the market, 
-// it keeps track of palced orders and their transactions.
+// it keeps track of placed orders and their transactions.
 
 public class OrderBook
 {
@@ -8,21 +8,73 @@ public class OrderBook
     private List<LimitOrder> ASKS { get; set; }
 
     // relative_order_book_time
-    public int market_ticks {get; private set;} = 0;
+    public int market_time { get; private set; } = 0;
+    public int market_TICKS { get; private set; } = 0;
 
 
+    // returns true if placed
     public bool place_limit_order(Side order_side, double quantity, decimal price)
     {
-        var new_order = new LimitOrder(order_side, quantity, price,market_ticks);
+        sort_orders();
+        var new_order = new LimitOrder(order_side, quantity, price, market_time);
         if (new_order.order_side == Side.buy)
+        {
+            match_limit_buy(new_order);
             BIDS.Add(new_order);
+        }
         else if (new_order.order_side == Side.sell)
+        {
+            match_limit_sell(new_order);
             ASKS.Add(new_order);
+        }
         else
             return false;
 
-        market_ticks++;
+        market_time++;
         return true;
+    }
+
+    public void clean_book()
+    {
+        ASKS.RemoveAll(a => a.status == Status.filled);
+        BIDS.RemoveAll(b => b.status == Status.filled);
+    }
+
+    // returns the amount of trades made
+    private int match_limit_buy(LimitOrder buy_order)
+    {
+        int trades = 0;
+        foreach (var ask in ASKS)
+            {
+                if ( ask.status != Status.filled && ask.price <= buy_order.price)
+                {
+                    trade(buy_order, ask);
+                }
+                if(buy_order.status == Status.filled)
+                    break;
+            }
+        return trades;
+    }
+
+    private int match_limit_sell(LimitOrder sell_order)
+    {
+        int trades = 0;
+        foreach (var bid in BIDS)
+            {
+                if (bid.status != Status.filled && bid.price >= sell_order.price)
+                {
+                    trade(sell_order, bid);
+                }
+                if (sell_order.status == Status.filled)
+                    break;
+            }
+        return trades;
+    }
+
+    private void trade(Order order1, LimitOrder order2)
+    {
+        order1.fill_order(order2.quantity);
+        order2.fill_order(order1.quantity);
     }
 
     public void print_orderbook()
@@ -33,30 +85,29 @@ public class OrderBook
         var copy_asks = new List<LimitOrder>(ASKS);
         copy_asks.Reverse();
         show_order_list(copy_asks);
-        
+
         Console.WriteLine("------------------------------------------------------->");
         Console.WriteLine($"BIDS({BIDS.Count()}):");
         show_order_list(BIDS);
     }
 
-    public void show_order_list(List<LimitOrder> list)
+    private void show_order_list(List<LimitOrder> list)
     {
         foreach (var order in list)
         {
-           Console.WriteLine($"ID:{order.order_id} - QUANTA:{order.quantity} - TICK:{order.relative_market_time} - STATUS:{order.status} - Price:{order.price}");
+            Console.WriteLine($"ID:{order.order_id} - QUANTA:{order.quantity} - TIME:{order.relative_market_time} - STATUS:{order.status}[{order.filled}/{order.quantity}] - Price:{order.price}");
         }
-
     }
 
-    public void sort_orders()
+    private void sort_orders()
     {
         // sorted to highest bid at top then fifo
-        BIDS.OrderByDescending(bid => bid.price)
-            .ThenBy(bid => bid.time);
+        BIDS = BIDS.OrderByDescending(bid => bid.price)
+            .ThenBy(bid => bid.time).ToList();
 
         // sorted to lowest ask at top then fifo
-        ASKS.OrderBy(ask => ask.price)
-            .ThenBy(bid => bid.time);
+        ASKS = ASKS.OrderBy(ask => ask.price)
+            .ThenBy(ask => ask.time).ToList();
     }
 
     public OrderBook()

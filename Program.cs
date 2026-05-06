@@ -1,10 +1,31 @@
 ﻿OrderBook test_book = new OrderBook();
-test_book.place_limit_order(Side.buy, 100,(decimal)40);
-test_book.place_limit_order(Side.buy, 100,(decimal)10);
-test_book.place_limit_order(Side.buy, 100,(decimal)20);
-test_book.place_limit_order(Side.sell, 100,(decimal)15);
-test_book.place_limit_order(Side.sell, 100,(decimal)80);
-test_book.place_limit_order(Side.sell, 100,(decimal)30);
+ Random dice = new Random();
 
-test_book.print_orderbook();
+ int counter = 0;
+while(counter < 100)
+{
+    var side = dice.Next(2);
+    var amount = dice.Next(100);
+    var price = dice.Next(1000);
+
+    if (side == 1)
+        test_book.place_limit_order(Side.buy, amount,(decimal)price);
+    else
+        test_book.place_limit_order(Side.sell, amount,(decimal)price);
+
+    Console.Clear();
+    test_book.clean_book();
+    test_book.print_orderbook();
+    Thread.Sleep(2000);
+    counter++;
+   
+
+}
+    
+    
+
+
+
+
+
 
