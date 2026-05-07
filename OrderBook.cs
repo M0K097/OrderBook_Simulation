@@ -13,6 +13,9 @@ public class OrderBook
     public void place_limit_order(Side order_side, double quantity, decimal price)
     {
         var new_order = new LimitOrder(order_side, quantity, price);
+        Console.WriteLine($"Placing new Order Type:{new_order.order_side} price:{new_order.price}, amount{new_order.quantity}");
+        Console.ReadLine();
+     
         if (new_order.order_side == Side.buy)
         {
             market_TICKS += match_limit_order(new_order, ASKS);
