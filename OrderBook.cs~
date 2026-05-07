@@ -14,12 +14,12 @@ public class OrderBook
         var new_order = new LimitOrder(order_side, quantity, price, market_time);
         if (new_order.order_side == Side.buy)
         {
-            market_TICKS += match_limit_buy(new_order);
+            market_TICKS += match_limit_order(new_order, BIDS);
             BIDS.Add(new_order);
         }
         else if (new_order.order_side == Side.sell)
         {
-            market_TICKS += match_limit_sell(new_order);
+            market_TICKS += match_limit_order(new_order, ASKS);
             ASKS.Add(new_order);
         }
         else
@@ -37,34 +37,21 @@ public class OrderBook
     }
 
     // returns the amount of trades made
-    private int match_limit_buy(LimitOrder buy_order)
+    private int match_limit_order(LimitOrder order, List<LimitOrder> orders_to_match)
     {
         int trades = 0;
-        foreach (var ask in ASKS)
+        foreach (var match in orders_to_match)
         {
-            if (ask.status != Status.filled && ask.price <= buy_order.price)
+            if(order.status == Status.filled)
+                break;
+            if(match.status == Status.filled)
+                continue;
+            if ((order.order_side == Side.sell && match.price <= order.price)||
+                (order.order_side == Side.buy && match.price >= order.price))
             {
-                trade(buy_order, ask);
+                trade(order, match);
                 trades++;
             }
-            if (buy_order.status == Status.filled)
-                break;
-        }
-        return trades;
-    }
-
-    private int match_limit_sell(LimitOrder sell_order)
-    {
-        int trades = 0;
-        foreach (var bid in BIDS)
-        {
-            if (bid.status != Status.filled && bid.price >= sell_order.price)
-            {
-                trade(sell_order, bid);
-                trades++;
-            }
-            if (sell_order.status == Status.filled)
-                break;
         }
         return trades;
     }
@@ -77,11 +64,12 @@ public class OrderBook
 
     public void print_orderbook()
     {
+        clean_book();
         Console.WriteLine($"ASKS({ASKS.Count()}):");
         var copy_asks = new List<LimitOrder>(ASKS);
         copy_asks.Reverse();
         show_order_list(copy_asks);
-        Console.WriteLine("------------------------------------------------------->");
+        Console.WriteLine($"Tick:{market_TICKS}> ------------------------------------------------------->");
         Console.WriteLine($"BIDS({BIDS.Count()}):");
         show_order_list(BIDS);
     }

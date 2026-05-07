@@ -14,7 +14,6 @@ while (counter < 200)
         test_book.place_limit_order(Side.sell, amount, (decimal)price);
 
     Console.Clear();
-    test_book.clean_book();
     test_book.print_orderbook();
     Thread.Sleep(1000);
     counter++;
