@@ -11,11 +11,9 @@ public class OrderBook
     public int market_time { get; private set; } = 0;
     public int market_TICKS { get; private set; } = 0;
 
-
     // returns true if placed
     public bool place_limit_order(Side order_side, double quantity, decimal price)
     {
-        sort_orders();
         var new_order = new LimitOrder(order_side, quantity, price, market_time);
         if (new_order.order_side == Side.buy)
         {
@@ -30,11 +28,12 @@ public class OrderBook
         else
             return false;
 
+        sort_orders();
         market_time++;
         return true;
     }
 
-    public void clean_book()
+    private void clean_book()
     {
         ASKS.RemoveAll(a => a.status == Status.filled);
         BIDS.RemoveAll(b => b.status == Status.filled);
@@ -44,32 +43,32 @@ public class OrderBook
     private int match_limit_buy(LimitOrder buy_order)
     {
         int trades = 0;
-        sort_orders();
         foreach (var ask in ASKS)
+        {
+            if (ask.status != Status.filled && ask.price <= buy_order.price)
             {
-                if ( ask.status != Status.filled && ask.price <= buy_order.price)
-                {
-                    trade(buy_order, ask);
-                }
-                if(buy_order.status == Status.filled)
-                    break;
+                trade(buy_order, ask);
+                trades++;
             }
+            if (buy_order.status == Status.filled)
+                break;
+        }
         return trades;
     }
 
     private int match_limit_sell(LimitOrder sell_order)
     {
         int trades = 0;
-        sort_orders();
         foreach (var bid in BIDS)
+        {
+            if (bid.status != Status.filled && bid.price >= sell_order.price)
             {
-                if (bid.status != Status.filled && bid.price >= sell_order.price)
-                {
-                    trade(sell_order, bid);
-                }
-                if (sell_order.status == Status.filled)
-                    break;
+                trade(sell_order, bid);
+                trades++;
             }
+            if (sell_order.status == Status.filled)
+                break;
+        }
         return trades;
     }
 
@@ -81,7 +80,6 @@ public class OrderBook
 
     public void print_orderbook()
     {
-        sort_orders();
         Console.WriteLine($"ASKS({ASKS.Count()}):");
 
         // turn list upside down just for the benefit of visualization
