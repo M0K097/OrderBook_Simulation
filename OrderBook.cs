@@ -5,10 +5,11 @@ public class OrderBook
 {
     private List<LimitOrder> BIDS { get; set; }
     private List<LimitOrder> ASKS { get; set; }
-    public int market_time { get; private set; } = 0;
-    public int market_TICKS { get; private set; } = 0;
+    public int market_time { get; private set; } = 0; //<-- internal time to sort orders FIFO
+    public int market_TICKS { get; private set; } = 0;//<-- amount of trades that get executed
     public List<string> trades_log = new List<string>();
 
+    // create a limit order then try to match it, if it can't be filled, add it to the book.
     public void place_limit_order(Side order_side, double quantity, decimal price)
     {
         var new_order = new LimitOrder(order_side, quantity, price, market_time);
@@ -28,6 +29,7 @@ public class OrderBook
         market_time++;
     }
 
+    // removes all filled orders from the book
     private void clean_book()
     {
         ASKS.RemoveAll(a => a.status == Status.filled);
@@ -37,21 +39,22 @@ public class OrderBook
     // returns the amount of trades made
     private int match_limit_order(LimitOrder order, List<LimitOrder> orders_to_match)
     {
-        int trades = 0;
+        int ticks = 0;
         foreach (var match in orders_to_match)
         {
             if (order.status == Status.filled)
                 break;
             if (match.status == Status.filled)
                 continue;
-            if (order.order_side == Side.buy && match.price <= order.price)
+            if ((order.order_side == Side.sell && match.price >= order.price) ||
+                (order.order_side == Side.buy && match.price <= order.price))
             {
                 var t = trade(order, match);
                 trades_log.Add(t);
-                trades++;
+                ticks++;
             }
         }
-        return trades;
+        return ticks;
     }
 
     private string trade(Order order1, LimitOrder order2)
@@ -63,28 +66,41 @@ public class OrderBook
 
     public void print_orderbook()
     {
+        Console.Clear();
         clean_book();
         Console.WriteLine($"ASKS({ASKS.Count()}):");
         var copy_asks = new List<LimitOrder>(ASKS);
         copy_asks.Reverse();
-        show_order_list(copy_asks);
+        show_order_list(copy_asks,8);
         Console.WriteLine($"Tick:{market_TICKS}> ------------------------------------------------------->");
         Console.WriteLine($"BIDS({BIDS.Count()}):");
-        show_order_list(BIDS);
+        show_order_list(BIDS,8);
+        show_trades(5);
 
-        Console.WriteLine("TRADES");
-        foreach (var t in trades_log)
-        {
-            Console.WriteLine(t);
-        }
     }
 
-    private void show_order_list(List<LimitOrder> list)
+    private void show_order_list(List<LimitOrder> list, int max_window)
     {
+        var counter = 0;
         foreach (var order in list)
         {
             Console.WriteLine($"ID:{order.order_id} - QUANTA:{order.quantity} - TIME:{order.relative_market_time} - STATUS:{order.status}[{order.filled}/{order.quantity}] - Price:{order.price}");
+            counter++;
+            if(counter > max_window)
+                break;
         }
+    }
+
+    public void show_trades(int max)
+    {
+        Console.WriteLine($"<============= LAST[{max}] TRADES ======================>");
+        var t = trades_log.Count()-1;
+        for(int i = t; i > t - max; i--)
+        {
+            if(i >= 0)
+            Console.WriteLine(trades_log[i]);
+        }
+
     }
 
     private void sort_orders()

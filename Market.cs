@@ -1,29 +1,43 @@
 public class Market
 {
-    public OrderBook book {get;}
-    public int market_makers {get;set;} = 0;
-    public int cycle_counter {get; private set;} = 0;
-    private bool open = false;
+    public OrderBook book { get; }
+    public int limit_orders_per_cycle { get; set; }
+    public double optimizm_parameter { get; set; }
+    public int max_quantity { get; set; }
+    public int max_price { get; set; }
+    public int max_cycles { get; set; }
     public int frequency_in_ms = 1000;
+    Random dice = new Random();
 
     public void start()
     {
-        open = true;
-        while(open)
+        for (int cycle = 0; cycle < max_cycles; cycle++)
         {
-            Console.Clear();
-            book.place_limit_order(Side.buy,100,(decimal)10);
+            var roll = dice.Next(100);
+            var amount = dice.Next(max_quantity);
+            var price = dice.Next(max_price);
+            if (roll < optimizm_parameter)
+            {
+                book.place_limit_order(Side.buy, amount, (decimal)price);
+            }
+            else
+            {
+                book.place_limit_order(Side.sell, amount, (decimal)price);
+
+            }
+            Console.WriteLine($"Market_Cycle[{cycle}]");
             book.print_orderbook();
             Thread.Sleep(frequency_in_ms);
         }
     }
-    public void stop() => open = false;
 
-    Random dice = new Random();
-
-
-    public Market(OrderBook book)
+    public Market(OrderBook book, int limit_orders_per_cycle, int max_cycles, int lambda, int max_quantity, int max_price)
     {
         this.book = book;
+        this.limit_orders_per_cycle = limit_orders_per_cycle;
+        this.max_cycles = max_cycles;
+        this.optimizm_parameter = lambda;
+        this.max_price = max_price;
+        this.max_quantity = max_quantity;
     }
 }
