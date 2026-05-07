@@ -17,12 +17,12 @@ public class OrderBook
         var new_order = new LimitOrder(order_side, quantity, price, market_time);
         if (new_order.order_side == Side.buy)
         {
-            match_limit_buy(new_order);
+            market_TICKS += match_limit_buy(new_order);
             BIDS.Add(new_order);
         }
         else if (new_order.order_side == Side.sell)
         {
-            match_limit_sell(new_order);
+            market_TICKS += match_limit_sell(new_order);
             ASKS.Add(new_order);
         }
         else
