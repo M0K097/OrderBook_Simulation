@@ -67,13 +67,11 @@ public abstract class Order
 public class LimitOrder : Order
 {
     public decimal price { get; private set; }
-    public int relative_market_time { get; private set; }
 
-    public LimitOrder(Side side, double quantity, decimal price, int ticker_time) : base(side, quantity)
+    public LimitOrder(Side side, double quantity, decimal price) : base(side, quantity)
     {
         this.type = OrderType.limit;
         this.price = price;
-        this.relative_market_time = ticker_time;
     }
 }
 

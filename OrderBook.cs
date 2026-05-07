@@ -7,12 +7,12 @@ public class OrderBook
     private List<LimitOrder> ASKS { get; set; }
     public int market_time { get; private set; } = 0; //<-- internal time to sort orders FIFO
     public int market_TICKS { get; private set; } = 0;//<-- amount of trades that get executed
-    public List<string> trades_log = new List<string>();
+    public List<decimal> execution_prices = new List<decimal>(); 
 
     // create a limit order then try to match it, if it can't be filled, add it to the book.
     public void place_limit_order(Side order_side, double quantity, decimal price)
     {
-        var new_order = new LimitOrder(order_side, quantity, price, market_time);
+        var new_order = new LimitOrder(order_side, quantity, price);
         if (new_order.order_side == Side.buy)
         {
             market_TICKS += match_limit_order(new_order, ASKS);
@@ -50,33 +50,34 @@ public class OrderBook
                 (order.order_side == Side.buy && match.price <= order.price))
             {
                 var t = trade(order, match);
-                trades_log.Add(t);
+                execution_prices.Add(t);
                 ticks++;
             }
         }
         return ticks;
     }
 
-    private string trade(Order order1, LimitOrder order2)
+    private decimal trade(Order order1, LimitOrder order2)
     {
         order1.fill_order(order2.quantity);
         order2.fill_order(order1.quantity);
-        return $"Trade Nr.{market_TICKS})  ORDER1[{order1.order_id}] <=> ORDER2[{order2.order_id}]";
+        var executen_price = order2.price;
+        return executen_price; 
     }
 
     public void print_orderbook()
     {
-        Console.Clear();
         clean_book();
         Console.WriteLine($"ASKS({ASKS.Count()}):");
         var copy_asks = new List<LimitOrder>(ASKS);
         copy_asks.Reverse();
         show_order_list(copy_asks,8);
-        Console.WriteLine($"Tick:{market_TICKS}> ------------------------------------------------------->");
+        var price = 0.0m;
+        if (execution_prices.Count() > 0)
+            price = execution_prices.Last();
+        Console.WriteLine($"-----------------------------------------------------> Tick:{market_TICKS} ------------>>> PRICE = {price} ");
         Console.WriteLine($"BIDS({BIDS.Count()}):");
         show_order_list(BIDS,8);
-        show_trades(5);
-
     }
 
     private void show_order_list(List<LimitOrder> list, int max_window)
@@ -84,33 +85,34 @@ public class OrderBook
         var counter = 0;
         foreach (var order in list)
         {
-            Console.WriteLine($"ID:{order.order_id} - QUANTA:{order.quantity} - TIME:{order.relative_market_time} - STATUS:{order.status}[{order.filled}/{order.quantity}] - Price:{order.price}");
+            Console.WriteLine($"ID:{order.order_id} - QUANTA:{order.quantity}  - FILL:[{order.filled}/{order.quantity}] - Price:{order.price}");
             counter++;
             if(counter > max_window)
                 break;
         }
     }
 
-    public void show_trades(int max)
+    public List<decimal> give_execution_prices(int max)
     {
-        Console.WriteLine($"<============= LAST[{max}] TRADES ======================>");
-        var t = trades_log.Count()-1;
-        for(int i = t; i > t - max; i--)
-        {
-            if(i >= 0)
-            Console.WriteLine(trades_log[i]);
-        }
+        return execution_prices;
+    }
 
+    public decimal give_last_price()
+    {
+        var price = 0.0m;
+        if(execution_prices.Count() > 0)
+            price = execution_prices.Last();
+        return price;
     }
 
     private void sort_orders()
     {
         // sorted to highest bid at top then fifo
         BIDS = BIDS.OrderByDescending(bid => bid.price)
-            .ThenBy(bid => bid.time).ToList();
+            .ThenBy(bid => bid.order_id).ToList();
         // sorted to lowest ask at top then fifo
         ASKS = ASKS.OrderBy(ask => ask.price)
-            .ThenBy(ask => ask.time).ToList();
+            .ThenBy(ask => ask.order_id).ToList();
     }
 
     public OrderBook()

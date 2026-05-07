@@ -7,24 +7,29 @@ public class Market
     public int max_price { get; set; }
     public int max_cycles { get; set; }
     public int frequency_in_ms = 1000;
+    public int risk_parameter {get;set;}
     Random dice = new Random();
 
     public void start()
     {
         for (int cycle = 0; cycle < max_cycles; cycle++)
         {
-            var roll = dice.Next(100);
-            var amount = dice.Next(max_quantity);
-            var price = dice.Next(max_price);
-            if (roll < optimizm_parameter)
+            for (int i = 0; i < limit_orders_per_cycle; i++)
             {
-                book.place_limit_order(Side.buy, amount, (decimal)price);
-            }
-            else
-            {
-                book.place_limit_order(Side.sell, amount, (decimal)price);
+                var roll = dice.Next(100);
+                var amount = dice.Next(max_quantity);
+                var price = dice.Next(max_price);
+                if (roll < optimizm_parameter)
+                {
+                    book.place_limit_order(Side.buy, amount, (decimal)price);
+                }
+                else
+                {
+                    book.place_limit_order(Side.sell, amount, (decimal)price);
 
+                }
             }
+            Console.Clear();
             Console.WriteLine($"Market_Cycle[{cycle}]");
             book.print_orderbook();
             Thread.Sleep(frequency_in_ms);
