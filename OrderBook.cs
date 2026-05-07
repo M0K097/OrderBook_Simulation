@@ -3,11 +3,8 @@
 
 public class OrderBook
 {
-    // only limit orders go to the book
     private List<LimitOrder> BIDS { get; set; }
     private List<LimitOrder> ASKS { get; set; }
-
-    // relative_order_book_time
     public int market_time { get; private set; } = 0;
     public int market_TICKS { get; private set; } = 0;
 
@@ -81,12 +78,9 @@ public class OrderBook
     public void print_orderbook()
     {
         Console.WriteLine($"ASKS({ASKS.Count()}):");
-
-        // turn list upside down just for the benefit of visualization
         var copy_asks = new List<LimitOrder>(ASKS);
         copy_asks.Reverse();
         show_order_list(copy_asks);
-
         Console.WriteLine("------------------------------------------------------->");
         Console.WriteLine($"BIDS({BIDS.Count()}):");
         show_order_list(BIDS);
@@ -105,7 +99,6 @@ public class OrderBook
         // sorted to highest bid at top then fifo
         BIDS = BIDS.OrderByDescending(bid => bid.price)
             .ThenBy(bid => bid.time).ToList();
-
         // sorted to lowest ask at top then fifo
         ASKS = ASKS.OrderBy(ask => ask.price)
             .ThenBy(ask => ask.time).ToList();
