@@ -7,27 +7,21 @@ public class OrderBook
     private List<LimitOrder> ASKS { get; set; }
     public int market_time { get; private set; } = 0;
     public int market_TICKS { get; private set; } = 0;
+    public List<string> trades_log = new List<string>();
 
-    // returns true if placed
-    public bool place_limit_order(Side order_side, double quantity, decimal price)
+    public void place_limit_order(Side order_side, double quantity, decimal price)
     {
         var new_order = new LimitOrder(order_side, quantity, price, market_time);
         if (new_order.order_side == Side.buy)
         {
             market_TICKS += match_limit_order(new_order, BIDS);
-            BIDS.Add(new_order);
         }
         else if (new_order.order_side == Side.sell)
         {
             market_TICKS += match_limit_order(new_order, ASKS);
-            ASKS.Add(new_order);
         }
-        else
-            return false;
-
         sort_orders();
         market_time++;
-        return true;
     }
 
     private void clean_book()
@@ -42,24 +36,28 @@ public class OrderBook
         int trades = 0;
         foreach (var match in orders_to_match)
         {
-            if(order.status == Status.filled)
+            if (order.status == Status.filled)
                 break;
-            if(match.status == Status.filled)
+            if (match.status == Status.filled)
                 continue;
-            if ((order.order_side == Side.sell && match.price <= order.price)||
+            if ((order.order_side == Side.sell && match.price <= order.price) ||
                 (order.order_side == Side.buy && match.price >= order.price))
             {
-                trade(order, match);
+                var t = trade(order, match);
+                trades_log.Add(t);
                 trades++;
             }
         }
+        if (order.status != Status.filled)
+            orders_to_match.Add(order);
         return trades;
     }
 
-    private void trade(Order order1, LimitOrder order2)
+    private string trade(Order order1, LimitOrder order2)
     {
         order1.fill_order(order2.quantity);
         order2.fill_order(order1.quantity);
+        return $"Trades Nr. {market_TICKS} => ORDER1[{order1.order_id} <=> ORDER2[{order2.order_id}]";
     }
 
     public void print_orderbook()
@@ -72,6 +70,12 @@ public class OrderBook
         Console.WriteLine($"Tick:{market_TICKS}> ------------------------------------------------------->");
         Console.WriteLine($"BIDS({BIDS.Count()}):");
         show_order_list(BIDS);
+
+        Console.WriteLine("TRADES");
+        foreach(var t in trades_log)
+        {
+            Console.WriteLine(t);
+        }
     }
 
     private void show_order_list(List<LimitOrder> list)
