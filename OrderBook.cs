@@ -14,11 +14,15 @@ public class OrderBook
         var new_order = new LimitOrder(order_side, quantity, price, market_time);
         if (new_order.order_side == Side.buy)
         {
-            market_TICKS += match_limit_order(new_order, BIDS);
+            market_TICKS += match_limit_order(new_order, ASKS);
+            if (new_order.status != Status.filled)
+                BIDS.Add(new_order);
         }
         else if (new_order.order_side == Side.sell)
         {
-            market_TICKS += match_limit_order(new_order, ASKS);
+            market_TICKS += match_limit_order(new_order, BIDS);
+            if (new_order.status != Status.filled)
+                ASKS.Add(new_order);
         }
         sort_orders();
         market_time++;
@@ -40,16 +44,13 @@ public class OrderBook
                 break;
             if (match.status == Status.filled)
                 continue;
-            if ((order.order_side == Side.sell && match.price <= order.price) ||
-                (order.order_side == Side.buy && match.price >= order.price))
+            if (order.order_side == Side.buy && match.price <= order.price)
             {
                 var t = trade(order, match);
                 trades_log.Add(t);
                 trades++;
             }
         }
-        if (order.status != Status.filled)
-            orders_to_match.Add(order);
         return trades;
     }
 
@@ -72,7 +73,7 @@ public class OrderBook
         show_order_list(BIDS);
 
         Console.WriteLine("TRADES");
-        foreach(var t in trades_log)
+        foreach (var t in trades_log)
         {
             Console.WriteLine(t);
         }
