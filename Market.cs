@@ -26,7 +26,7 @@ public class Market
             }
             Console.Clear();
             Console.WriteLine($"Market_Cycle[{cycle}]");
-            console_printer.print_orderbook(book);
+            ConsolePrinter.print_orderbook(book);
             Thread.Sleep(frequency_in_ms);
         }
     }
