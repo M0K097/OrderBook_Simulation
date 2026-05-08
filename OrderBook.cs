@@ -6,9 +6,9 @@ public class OrderBook
     public int ticks { get; } = 0;
     public List<LimitOrder> BIDS { get; private set; } = new List<LimitOrder>();
     public List<LimitOrder> ASKS { get; private set; } = new List<LimitOrder>();
-    public List<TradeLog> trade_log = new List<TradeLog>();
+    public List<Tradelog> trade_log = new List<Tradelog>();
 
-    public void place_limit_order(Side order_side, double quantity, decimal price)
+    public void place_limit_order(Side order_side, decimal quantity, decimal price)
     {
         var new_order = new LimitOrder(order_side, quantity, price);
         Console.WriteLine($"placing ORDER: ID:{new_order.order_id} SIDE:{new_order.order_side} QUANTITY:{new_order.quantity} PRICE:{new_order.price}");
@@ -54,7 +54,7 @@ public class OrderBook
         var qty = Math.Min(o1.remaining, o2.remaining);
         o1.fill(qty);
         o2.fill(qty);
-        var log = new TradeLog(o1.order_id, o2.order_id, qty,o2.price);
+        var log = new Tradelog(o1.order_id, o2.order_id, qty,o2.price);
         log.print();
         trade_log.Add(log);
     }

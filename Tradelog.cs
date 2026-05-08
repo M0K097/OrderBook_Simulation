@@ -1,10 +1,10 @@
-public class TradeLog
+public class Tradelog
 {
     private static int log_id_counter = 0;
     public int log_id { get; set; }
     public int taker_id { get; set; }
     public int maker_id { get; set; }
-    public double quantity {get;set;}
+    public decimal quantity {get;set;}
     decimal execution_price { get; set; }
 
     public void print()
@@ -16,7 +16,7 @@ public class TradeLog
                 $"= execution-price: {execution_price}");
     }
 
-    public TradeLog(int new_order_id, int resting_order_id, double qty, decimal price)
+    public Tradelog(int new_order_id, int resting_order_id, decimal qty, decimal price)
     {
         this.log_id = log_id_counter++;
         this.taker_id = new_order_id;

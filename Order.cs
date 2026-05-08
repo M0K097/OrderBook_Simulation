@@ -18,15 +18,15 @@ public abstract class Order
 
     public int order_id { get; }
     public Side order_side { get; }
-    public double quantity { get; }
+    public decimal quantity { get; }
     public DateTime time { get; }
     public Status status { get; private set; }
-    public double filled { get; private set; }
-    public double remaining { get; private set; }
+    public decimal filled { get; private set; }
+    public decimal remaining { get; private set; }
 
     public void cancel_order() => status = Status.cancelled;
 
-    public void fill(double qty)
+    public void fill(decimal qty)
     {
         if(status == Status.cancelled)
             return;
@@ -40,7 +40,7 @@ public abstract class Order
             status = Status.partially_filled;
     }
 
-    public Order(Side side, double quantity)
+    public Order(Side side, decimal quantity)
     {
         this.order_id = Order.order_id_counter++;
         this.order_side = side;
@@ -55,7 +55,7 @@ public abstract class Order
 public class LimitOrder : Order
 {
     public decimal price { get; private set; }
-    public LimitOrder(Side side, double quantity, decimal price) : base(side, quantity)
+    public LimitOrder(Side side, decimal quantity, decimal price) : base(side, quantity)
     {
         this.price = price;
     }
@@ -63,6 +63,5 @@ public class LimitOrder : Order
 
 public class MarketOrder : Order
 {
-    public MarketOrder(Side side, double quantity) : base(side, quantity){}
+    public MarketOrder(Side side, decimal quantity) : base(side, quantity){}
 }
-
