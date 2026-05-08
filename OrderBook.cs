@@ -19,54 +19,40 @@ public class OrderBook
             match_limit_order_sell(new_order);
     }
 
+    public void match_limit_order_sell(LimitOrder order)
+    {
+        while (order.status != Status.filled && BIDS.Count() > 0)
+        {
+            var best_bid = BIDS[0];
+
+            if (order.price < best_bid.price)
+                break;
+            trade(order, best_bid);
+            if (best_bid.status == Status.filled)
+                BIDS.Remove(best_bid);
+        }
+        if (order.status != Status.filled)
+            ASKS.Add(order);
+    }
     public void match_limit_order_buy(LimitOrder order)
     {
-        if (ASKS.Count() > 0)
+        while (order.status != Status.filled && ASKS.Count() > 0)
         {
-            var best_sell = ASKS.First();
-            while (order.status != Status.filled && order.price >= best_sell.price)
-            {
-                trade(order, best_sell);
-                if (best_sell.status == Status.filled)
-                {
-                    ASKS.Remove(best_sell);
-                    if (ASKS.Count() > 0)
-                        best_sell = ASKS.First();
-                    else
-                        break;
-                }
-            }
+            var best_sell = ASKS[0];
+
+            if (order.price < best_sell.price)
+                break;
+            trade(order, best_sell);
+            if (best_sell.status == Status.filled)
+                ASKS.Remove(best_sell);
         }
         if (order.status != Status.filled)
             BIDS.Add(order);
     }
 
-
-    public void match_limit_order_sell(LimitOrder order)
-    {
-        if (BIDS.Count() > 0)
-        {
-            var best_bid = BIDS.First();
-            while (order.status != Status.filled && order.price <= best_bid.price)
-            {
-                trade(order, best_bid);
-                if (best_bid.status == Status.filled)
-                {
-                    BIDS.Remove(best_bid);
-                    if (BIDS.Count() > 0)
-                        best_bid = BIDS.First();
-                    else
-                        break;
-                }
-            }
-        }
-        if (order.status != Status.filled)
-            ASKS.Add(order);
-    }
-
     private void trade(Order o1, LimitOrder o2)
     {
-        var qty = Math.Min(o1.remaining,o2.remaining);
+        var qty = Math.Min(o1.remaining, o2.remaining);
         o1.fill(qty);
         o2.fill(qty);
         var trade = new Trade(o1, o2);
