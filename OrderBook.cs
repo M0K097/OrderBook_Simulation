@@ -20,7 +20,7 @@ public class OrderBook
 
     public void match_limit_order_sell(LimitOrder order)
     {
-        while (order.status != Status.filled && BIDS.Count() > 0)
+        while (order.status != Status.filled && BIDS.Count > 0)
         {
             var best_bid = BIDS[0];
 
@@ -35,7 +35,7 @@ public class OrderBook
     }
     public void match_limit_order_buy(LimitOrder order)
     {
-        while (order.status != Status.filled && ASKS.Count() > 0)
+        while (order.status != Status.filled && ASKS.Count > 0)
         {
             var best_sell = ASKS[0];
 
