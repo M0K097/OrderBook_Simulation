@@ -10,7 +10,6 @@ public class OrderBook
 
     public void place_limit_order(Side order_side, double quantity, decimal price)
     {
-        sort_orders();
         var new_order = new LimitOrder(order_side, quantity, price);
         Console.WriteLine($"placing ORDER: ID:{new_order.order_id} SIDE:{new_order.order_side} QUANTITY:{new_order.quantity} PRICE:{new_order.price}");
         if (new_order.order_side == Side.buy)
@@ -32,7 +31,7 @@ public class OrderBook
                 BIDS.Remove(best_bid);
         }
         if (order.status != Status.filled)
-            ASKS.Add(order);
+            insert_ask(order);
     }
     public void match_limit_order_buy(LimitOrder order)
     {
@@ -47,7 +46,7 @@ public class OrderBook
                 ASKS.Remove(best_sell);
         }
         if (order.status != Status.filled)
-            BIDS.Add(order);
+            insert_bid(order);
     }
 
     private void trade(Order o1, LimitOrder o2)
@@ -60,12 +59,26 @@ public class OrderBook
         trade_log.Add(trade);
     }
 
-    private void sort_orders()
+    public void insert_ask(LimitOrder order)
     {
-        BIDS = BIDS.OrderByDescending(bid => bid.price)
-            .ThenByDescending(bid => bid.order_id).ToList();
-        ASKS = ASKS.OrderBy(ask => ask.price)
-            .ThenByDescending(ask => ask.order_id).ToList();
+        var i = 0;
+        while (ASKS.Count > 0 && i < ASKS.Count && (ASKS[i].price < order.price ||
+                ASKS[i].price == order.price && ASKS[i].order_id < order.order_id))
+        {
+            i++;
+        }
+        ASKS.Insert(i, order);
     }
 
+    public void insert_bid(LimitOrder order)
+    {
+        var i = 0;
+        while (BIDS.Count > 0 && i < BIDS.Count && (BIDS[i].price > order.price ||
+                BIDS[i].price == order.price && BIDS[i].order_id < order.order_id))
+        {
+            i++;
+        }
+        BIDS.Insert(i, order);
+
+    }
 }
