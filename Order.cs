@@ -28,6 +28,9 @@ public abstract class Order
 
     public void fill(double qty)
     {
+        if(status == Status.cancelled)
+            return;
+
         remaining -= qty;
         filled += qty;
 
