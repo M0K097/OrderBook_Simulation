@@ -63,7 +63,7 @@ public class OrderBook
     {
         var i = 0;
         while (ASKS.Count > 0 && i < ASKS.Count && (ASKS[i].price < order.price ||
-                ASKS[i].price == order.price && ASKS[i].order_id < order.order_id))
+                ASKS[i].price == order.price && ASKS[i].order_id <= order.order_id))
         {
             i++;
         }
@@ -74,7 +74,7 @@ public class OrderBook
     {
         var i = 0;
         while (BIDS.Count > 0 && i < BIDS.Count && (BIDS[i].price > order.price ||
-                BIDS[i].price == order.price && BIDS[i].order_id < order.order_id))
+                BIDS[i].price == order.price && BIDS[i].order_id <= order.order_id))
         {
             i++;
         }
