@@ -26,20 +26,20 @@ public abstract class Order
 
     public void cancel_order() => status = Status.cancelled;
 
-    public int fill(double amount)
+    public void fill(double amount)
     {
-        var trades = 0;
         while(remaining > 0 && amount > 0)
         {
             amount--;
             remaining--;
             filled++;
         }
-        if(remaining == 0 && filled == quantity)
+        if(filled == 0)
+            status = Status.open;
+        else if (remaining == 0)
             status = Status.filled;
-        else if (remaining != quantity)
+        else
             status = Status.partially_filled;
-        return trades;
     }
 
     public Order(Side side, double quantity)
