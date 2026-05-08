@@ -25,7 +25,7 @@ public class OrderBook
         {
             var best_bid = BIDS[0];
 
-            if (order.price <= best_bid.price)
+            if (best_bid.price < order.price)
                 break;
             trade(order, best_bid);
             if (best_bid.status == Status.filled)
@@ -40,7 +40,7 @@ public class OrderBook
         {
             var best_sell = ASKS[0];
 
-            if (order.price >= best_sell.price)
+            if (best_sell.price > order.price)
                 break;
             trade(order, best_sell);
             if (best_sell.status == Status.filled)
