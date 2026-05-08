@@ -37,7 +37,7 @@ public abstract class Order
         }
         if(remaining == 0 && filled == quantity)
             status = Status.filled;
-        else
+        else if (remaining != quantity)
             status = Status.partially_filled;
         return trades;
     }

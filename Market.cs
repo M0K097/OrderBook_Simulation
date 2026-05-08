@@ -17,9 +17,9 @@ public class Market
             for (int i = 0; i < limit_orders_per_cycle; i++)
             {
                 var roll = dice.Next(100);
-                var amount = dice.Next(max_quantity);
-                var price = dice.Next(max_price);
-                if (roll < optimizm_parameter)
+                var amount = dice.Next(max_quantity)+1;
+                var price = dice.Next(max_price)+1;
+                if (roll <= optimizm_parameter)
                     book.place_limit_order(Side.buy, amount, (decimal)price);
                 else
                     book.place_limit_order(Side.sell, amount, (decimal)price);

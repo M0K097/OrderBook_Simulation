@@ -10,18 +10,17 @@ public class OrderBook
 
     public void place_limit_order(Side order_side, double quantity, decimal price)
     {
+        sort_orders();
         var new_order = new LimitOrder(order_side, quantity, price);
         Console.WriteLine($"placing ORDER: ID:{new_order.order_id} SIDE:{new_order.order_side} QUANTITY:{new_order.quantity} PRICE:{new_order.price}");
         if (new_order.order_side == Side.buy)
             match_limit_order_buy(new_order);
         else
             match_limit_order_sell(new_order);
-        sort_orders();
     }
 
     public void match_limit_order_buy(LimitOrder order)
     {
-        sort_orders();
         if (ASKS.Count() > 0)
         {
             var best_sell = ASKS.First();
@@ -45,7 +44,6 @@ public class OrderBook
 
     public void match_limit_order_sell(LimitOrder order)
     {
-        sort_orders();
         if (BIDS.Count() > 0)
         {
             var best_bid = BIDS.First();
@@ -68,8 +66,8 @@ public class OrderBook
 
     private void trade(Order o1, LimitOrder o2)
     {
-        var tmp = o1.quantity;
-        o1.fill(o2.quantity);
+        var tmp = o1.remaining;
+        o1.fill(o2.remaining);
         o2.fill(tmp);
         var trade = new Trade(o1, o2);
         trade.print();
@@ -79,9 +77,9 @@ public class OrderBook
     private void sort_orders()
     {
         BIDS = BIDS.OrderByDescending(bid => bid.price)
-            .ThenBy(bid => bid.order_id).ToList();
+            .ThenByDescending(bid => bid.order_id).ToList();
         ASKS = ASKS.OrderBy(ask => ask.price)
-            .ThenBy(ask => ask.order_id).ToList();
+            .ThenByDescending(ask => ask.order_id).ToList();
     }
 
 }
