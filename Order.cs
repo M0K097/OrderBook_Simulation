@@ -26,19 +26,14 @@ public abstract class Order
 
     public void cancel_order() => status = Status.cancelled;
 
-    public void fill(double amount)
+    public void fill(double qty)
     {
-        while(remaining > 0 && amount > 0)
-        {
-            amount--;
-            remaining--;
-            filled++;
-        }
-        if(filled == 0)
-            status = Status.open;
-        else if (remaining == 0)
+        remaining -= qty;
+        filled += qty;
+
+        if (remaining == 0)
             status = Status.filled;
-        else
+        else if (filled > 0)
             status = Status.partially_filled;
     }
 
