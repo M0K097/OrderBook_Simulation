@@ -4,12 +4,6 @@ public enum Side
     sell
 }
 
-public enum OrderType
-{
-    market,
-    limit
-}
-
 public enum Status
 {
     open,
@@ -23,7 +17,6 @@ public abstract class Order
     public static int order_id_counter = 0;
 
     public int order_id { get; }
-    public OrderType type { get; set; }
     public Side order_side { get; }
     public double quantity { get; }
     public DateTime time { get; }
@@ -31,25 +24,23 @@ public abstract class Order
     public double filled { get; private set; }
     public double remaining { get; private set; }
 
-    public void fill_order(double amount)
-    {
-        var left_over = amount - remaining;
-        if (left_over >= 0)
-        {
-            filled += remaining;
-            status = Status.filled;
-            remaining = 0;
-        }
-        else
-        {
-            remaining -= amount;
-            filled += amount;
-            left_over = 0;
-            status = Status.partially_filled;
-        }
-    }
-
     public void cancel_order() => status = Status.cancelled;
+
+    public int fill(double amount)
+    {
+        var trades = 0;
+        while(remaining > 0 && amount > 0)
+        {
+            amount--;
+            remaining--;
+            filled++;
+        }
+        if(remaining == 0 && filled == quantity)
+            status = Status.filled;
+        else
+            status = Status.partially_filled;
+        return trades;
+    }
 
     public Order(Side side, double quantity)
     {
@@ -63,24 +54,17 @@ public abstract class Order
     }
 }
 
-// a limit order needs a price it can be executed for.
 public class LimitOrder : Order
 {
     public decimal price { get; private set; }
-
     public LimitOrder(Side side, double quantity, decimal price) : base(side, quantity)
     {
-        this.type = OrderType.limit;
         this.price = price;
     }
 }
 
-// a market order is executed to the best available price right now.
 public class MarketOrder : Order
 {
-    public MarketOrder(Side side, double quantity, decimal price) : base(side, quantity)
-    {
-        this.type = OrderType.market;
-    }
+    public MarketOrder(Side side, double quantity) : base(side, quantity){}
 }
 

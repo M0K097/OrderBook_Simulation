@@ -20,18 +20,14 @@ public class Market
                 var amount = dice.Next(max_quantity);
                 var price = dice.Next(max_price);
                 if (roll < optimizm_parameter)
-                {
                     book.place_limit_order(Side.buy, amount, (decimal)price);
-                }
                 else
-                {
                     book.place_limit_order(Side.sell, amount, (decimal)price);
-
-                }
             }
             Console.Clear();
             Console.WriteLine($"Market_Cycle[{cycle}]");
-            book.print_orderbook();
+            console_printer.print_orderbook(book); 
+            console_printer.print_trade(book);
             Thread.Sleep(frequency_in_ms);
         }
     }
