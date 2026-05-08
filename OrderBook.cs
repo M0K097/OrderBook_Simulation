@@ -66,9 +66,9 @@ public class OrderBook
 
     private void trade(Order o1, LimitOrder o2)
     {
-        var tmp = o1.remaining;
-        o1.fill(o2.remaining);
-        o2.fill(tmp);
+        var qty = Math.Min(o1.remaining,o2.remaining);
+        o1.fill(qty);
+        o2.fill(qty);
         var trade = new Trade(o1, o2);
         trade.print();
         trade_log.Add(trade);
