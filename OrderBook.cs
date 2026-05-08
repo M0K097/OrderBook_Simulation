@@ -11,7 +11,6 @@ public class OrderBook
     public void place_limit_order(Side order_side, decimal quantity, decimal price)
     {
         var new_order = new LimitOrder(order_side, quantity, price);
-        Console.WriteLine($"placing ORDER: ID:{new_order.order_id} SIDE:{new_order.order_side} QUANTITY:{new_order.quantity} PRICE:{new_order.price}");
         if (new_order.order_side == Side.buy)
             match_limit_order_buy(new_order);
         else

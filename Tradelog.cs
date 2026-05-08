@@ -9,11 +9,11 @@ public class Tradelog
 
     public void print()
     {
-        Console.WriteLine($"Log Nr.:{log_id}\n" +
-                $"taker-ID:{taker_id}\n" +
-                $"maker-ID:{maker_id}\n" +
-                $"qnt:{quantity}\n" +
-                $"= execution-price: {execution_price}");
+        Console.WriteLine($"Log Nr.:{log_id}" +
+                $" - taker-ID:{taker_id}" +
+                $" - maker-ID:{maker_id}" +
+                $" - qnt:{quantity}" +
+                $" = execution-price: {execution_price}");
     }
 
     public Tradelog(int new_order_id, int resting_order_id, decimal qty, decimal price)
