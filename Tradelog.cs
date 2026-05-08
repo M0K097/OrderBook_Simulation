@@ -5,7 +5,7 @@ public class Tradelog
     public int taker_id { get; set; }
     public int maker_id { get; set; }
     public decimal quantity {get;set;}
-    decimal execution_price { get; set; }
+    public decimal execution_price { get; set; }
 
     public void print()
     {
