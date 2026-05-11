@@ -36,7 +36,7 @@ public static class ConsolePrinter
         var counter = 0;
         foreach (var order in list)
         {
-            Console.WriteLine($"ID:{order.order_id} - AMOUNT:{order.quantity}  - FILL:[{order.filled}/{order.quantity}] - PRICE:{order.price}");
+            Console.WriteLine($"ID:{order.order_id} - QUANTA:{order.quantity}  - FILLED:[{order.filled}/{order.quantity}] - Price:{order.price}");
             counter++;
             if (counter > max_window)
                 break;
